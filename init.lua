@@ -998,7 +998,7 @@ require('lspconfig').pylsp.setup {
         },
         ruff = {
           enabled = true,
-          formatEnabled = true,
+          formatEnabled = false,
           lineLength = 120,
           targetVersion = 'py311',
         },
