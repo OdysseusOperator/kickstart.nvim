@@ -136,7 +136,7 @@ vim.opt.updatetime = 125
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
-vim.opt.timeoutlen = 200
+vim.opt.timeoutlen = 500
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -702,17 +702,19 @@ require('lazy').setup({
           lsp_format_opt = 'fallback'
         end
         return {
-          timeout_ms = 500,
+          timeout_ms = 2000,
           lsp_format = lsp_format_opt,
         }
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
-        json = {},
+        python = { 'ruff_format', 'ruff_organize_imports' },
+        json = { 'prettier' }, -- {} also good default
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        yaml = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -927,7 +929,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
@@ -998,7 +1000,7 @@ require('lspconfig').pylsp.setup {
         },
         ruff = {
           enabled = true,
-          formatEnabled = true,
+          formatEnabled = false,
           lineLength = 120,
           targetVersion = 'py311',
         },
@@ -1017,5 +1019,6 @@ require('lspconfig').pylsp.setup {
 -- }
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', {})
 vim.keymap.set('n', '<leader>xt', ':Telescope colorscheme<CR>', {})
+vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
