@@ -2,16 +2,23 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
+
+local function ScrollBar()
+  local curr_line = vim.api.nvim_win_get_cursor(0)[1]
+  local lines = vim.api.nvim_buf_line_count(0)
+  local i = math.floor((curr_line - 1) / lines * #SCROLL_BAR) + 1
+  return "%#String#" .. string.rep(SCROLL_BAR[i], 2) -- I add '%#String#' here
+end
 return {
   {
     'levouh/tint.nvim',
     config = function()
       -- Override some defaults
       require('tint').setup {
-        tint = -45, -- Darken colors, use a positive value to brighten
-        saturation = 0.6, -- Saturation to preserve
-        transforms = require('tint').transforms.SATURATE_TINT, -- Showing default behavior, but value here can be predefined set of transforms
-        tint_background_colors = true, -- Tint background portions of highlight groups
+        tint = -45,                                                 -- Darken colors, use a positive value to brighten
+        saturation = 0.6,                                           -- Saturation to preserve
+        transforms = require('tint').transforms.SATURATE_TINT,      -- Showing default behavior, but value here can be predefined set of transforms
+        tint_background_colors = true,                              -- Tint background portions of highlight groups
         highlight_ignore_patterns = { 'WinSeparator', 'Status.*' }, -- Highlight group patterns to ignore, see `string.find`
         window_ignore_function = function(winid)
           local bufid = vim.api.nvim_win_get_buf(winid)
@@ -94,11 +101,11 @@ return {
         },
         sections = {
           lualine_a = { 'mode' },
-          lualine_b = { 'branch', 'diff', 'diagnostics' },
+          lualine_b = { 'branch', 'diagnostics' },
           lualine_c = { 'filename' },
           --lualine_x = { 'filetype', 'encoding' }, -- "fileformat",
           --lualine_y = { "progress" },
-          lualine_z = { 'location' },
+          lualine_z = { 'location', ScrollBar },
           lualine_x = {
             'copilot',
             'encoding',
@@ -145,4 +152,11 @@ return {
       vim.cmd.colorscheme 'gruvbox-material'
     end,
   },
+  {
+    'odysseusOperator/start.nvim', --hack and copy
+    config = function()
+      -- lua
+      require 'start'.set_background_ascii(require 'start'.default_ascii_1)
+    end,
+  }
 } -- end of return
