@@ -7,7 +7,7 @@ local function ScrollBar()
   local curr_line = vim.api.nvim_win_get_cursor(0)[1]
   local lines = vim.api.nvim_buf_line_count(0)
   local i = math.floor((curr_line - 1) / lines * #SCROLL_BAR) + 1
-  return "%#String#" .. string.rep(SCROLL_BAR[i], 2) -- I add '%#String#' here
+  return '%#String#' .. string.rep(SCROLL_BAR[i], 2) -- I add '%#String#' here
 end
 return {
   {
@@ -15,10 +15,10 @@ return {
     config = function()
       -- Override some defaults
       require('tint').setup {
-        tint = -45,                                                 -- Darken colors, use a positive value to brighten
-        saturation = 0.6,                                           -- Saturation to preserve
-        transforms = require('tint').transforms.SATURATE_TINT,      -- Showing default behavior, but value here can be predefined set of transforms
-        tint_background_colors = true,                              -- Tint background portions of highlight groups
+        tint = -45, -- Darken colors, use a positive value to brighten
+        saturation = 0.6, -- Saturation to preserve
+        transforms = require('tint').transforms.SATURATE_TINT, -- Showing default behavior, but value here can be predefined set of transforms
+        tint_background_colors = true, -- Tint background portions of highlight groups
         highlight_ignore_patterns = { 'WinSeparator', 'Status.*' }, -- Highlight group patterns to ignore, see `string.find`
         window_ignore_function = function(winid)
           local bufid = vim.api.nvim_win_get_buf(winid)
@@ -156,30 +156,49 @@ return {
     'odysseusOperator/start.nvim', --hack and copy
     config = function()
       -- lua
-      require 'start'.set_background_ascii(require 'start'.default_ascii_1)
+      require('start').set_background_ascii(require('start').default_ascii_1)
     end,
   },
   {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
     config = function()
-      local harpoon = require("harpoon")
+      local harpoon = require 'harpoon'
       -- REQUIRED
       harpoon:setup()
       -- REQUIRED
 
-      vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-      vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+      vim.keymap.set('n', '<leader>a', function()
+        harpoon:list():add()
+      end)
+      vim.keymap.set('n', '<C-e>', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end)
 
-      vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
-      vim.keymap.set("n", "<C-j>", function() harpoon:list():select(2) end)
-      vim.keymap.set("n", "<C-k>", function() harpoon:list():select(3) end)
-      vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
+      vim.keymap.set('n', '<C-h>', function()
+        harpoon:list():select(1)
+      end)
+      vim.keymap.set('n', '<C-j>', function()
+        harpoon:list():select(2)
+      end)
+      vim.keymap.set('n', '<C-k>', function()
+        harpoon:list():select(3)
+      end)
+      vim.keymap.set('n', '<C-l>', function()
+        harpoon:list():select(4)
+      end)
 
       -- Toggle previous & next buffers stored within Harpoon list
-      vim.keymap.set("n", "<leader>p", function() harpoon:list():prev() end)
-      vim.keymap.set("n", "<leader>n", function() harpoon:list():next() end)
+      vim.keymap.set('n', '<leader>p', function()
+        harpoon:list():prev()
+      end)
+      vim.keymap.set('n', '<leader>n', function()
+        harpoon:list():next()
+      end)
+
+      vim.keymap.set('n', '<left>', ':bp<CR>')
+      vim.keymap.set('n', '<right>', ':bn<CR>')
     end,
-  }
+  },
 } -- end of return
