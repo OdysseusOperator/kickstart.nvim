@@ -219,6 +219,20 @@ return {
     opts = {
       -- See Configuration section for options
     },
+    config = function()
+      local chat = require 'CopilotChat'
+      chat.setup()
+      vim.keymap.set({ 'n' }, '<leader>aa', chat.toggle, { desc = 'AI Toggle' })
+      vim.keymap.set({ 'v' }, '<leader>aa', chat.open, { desc = 'AI Open' })
+      vim.keymap.set({ 'n' }, '<leader>ax', chat.reset, { desc = 'AI Reset' })
+      vim.keymap.set({ 'n' }, '<leader>as', chat.stop, { desc = 'AI Stop' })
+      vim.keymap.set({ 'n' }, '<leader>am', chat.select_model, { desc = 'AI Model' })
+      vim.keymap.set('n', '<leader>ar', ':CopilotChatFix<CR>', { desc = 'AI Fix' })
+
+      vim.keymap.set('n', '<leader>at', ':CopilotChatTests<CR>', { desc = 'AI Tests' })
+      vim.keymap.set('n', '<leader>ad', ':CopilotChatDocs<CR>', { desc = 'AI Docs' })
+      vim.keymap.set('n', '<leader>ar', ':CopilotChatReview<CR>', { desc = 'AI Review' })
+    end,
     -- See Commands section for default commands if you want to lazy load on them
   },
 } -- end of return

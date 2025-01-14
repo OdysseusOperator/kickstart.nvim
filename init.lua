@@ -1008,44 +1008,44 @@ require('lazy').setup({
 -- My own additions
 -- Manually install python-lsp-black, python-lsp-isort and pylsp-mypy into the venv created by mason
 -- /.local/share/mason/packages/python-lsp-server/venv...
-require('lspconfig').pylsp.setup {
-  settings = {
-    pylsp = {
-      plugins = {
-        black = {
-          enabled = false,
-          --  line_length = 120,
-        },
-        autopep8 = {
-          enabled = false,
-        },
-        yapf = {
-          enabled = false,
-        },
-        pycodestyle = {
-          enabled = false,
-          ignore = { 'W391' },
-          maxLineLength = 120,
-        },
-        isort = {
-          enabled = false,
-        },
-        pylint = {
-          enabled = false,
-        },
-        pyflakes = {
-          enabled = false,
-        },
-        ruff = {
-          enabled = true,
-          formatEnabled = false,
-          lineLength = 120,
-          targetVersion = 'py311',
-        },
-      },
-    },
-  },
-}
+-- require('lspconfig').pylsp.setup {
+--   settings = {
+--     pylsp = {
+--       plugins = {
+--         black = {
+--           enabled = false,
+--           --  line_length = 120,
+--         },
+--         autopep8 = {
+--           enabled = false,
+--         },
+--         yapf = {
+--           enabled = false,
+--         },
+--         pycodestyle = {
+--           enabled = false,
+--           ignore = { 'W391' },
+--           maxLineLength = 120,
+--         },
+--         isort = {
+--           enabled = false,
+--         },
+--         pylint = {
+--           enabled = false,
+--         },
+--         pyflakes = {
+--           enabled = false,
+--         },
+--         ruff = {
+--           enabled = true,
+--           formatEnabled = false,
+--           lineLength = 120,
+--           targetVersion = 'py311',
+--         },
+--       },
+--     },
+--   },
+-- }
 -- require('lspconfig').ruff.setup {
 --   init_options = {
 --     settings = {
@@ -1058,5 +1058,7 @@ require('lspconfig').pylsp.setup {
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', {})
 vim.keymap.set('n', '<leader>xt', ':Telescope colorscheme<CR>', {})
 vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
+vim.keymap.set('n', '<leader><left>', ':bp<CR>')
+vim.keymap.set('n', '<leader><right>', ':bn<CR>')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
