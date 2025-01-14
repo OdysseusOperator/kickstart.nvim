@@ -64,9 +64,17 @@ return {
     end,
     vim.opt.guicursor:append 'n-c:block-Cursor',
   },
-  -- {
-  --   'github/copilot.vim',
-  -- },
+  {
+    'github/copilot.vim',
+    config = function()
+      vim.cmd [[Copilot disable]]
+
+      -- Keybinding to toggle Copilot
+      vim.keymap.set('n', '<leader>cp', function()
+        vim.cmd [[Copilot toggle]]
+      end, { noremap = true, silent = true, desc = 'Toggle Copilot' })
+    end,
+  },
   {
     'akinsho/bufferline.nvim',
     version = '*',
