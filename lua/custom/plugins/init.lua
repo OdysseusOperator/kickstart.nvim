@@ -197,8 +197,8 @@ return {
         harpoon:list():next()
       end)
 
-      vim.keymap.set('n', '<left>', ':bp<CR>')
-      vim.keymap.set('n', '<right>', ':bn<CR>')
+      vim.keymap.set('n', '<leader><left>', ':bp<CR>')
+      vim.keymap.set('n', '<leader><right>', ':bn<CR>')
     end,
   },
 } -- end of return
