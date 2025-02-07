@@ -45,7 +45,7 @@ return {
         },
 
         -- Set opacity for cursorline and number background
-        line_opacity = 0.5,
+        line_opacity = 0.4,
 
         -- Enable cursor highlights
         set_cursor = true,
@@ -62,7 +62,7 @@ return {
         ignore_filetypes = { 'NvimTree', 'TelescopePrompt' },
       }
     end,
-    vim.opt.guicursor:append 'n-c:block-Cursor',
+    -- vim.opt.guicursor:append 'n-c:block-Cursor',
   },
   {
     'github/copilot.vim',
@@ -166,13 +166,13 @@ return {
       vim.cmd.colorscheme 'gruvbox-material'
     end,
   },
-  {
-    'odysseusOperator/start.nvim', --hack and copy
-    config = function()
-      -- lua
-      require('start').set_background_ascii(require('start').default_ascii_1)
-    end,
-  },
+  -- {
+  --   'odysseusOperator/start.nvim', --hack and copy
+  --   config = function()
+  --     -- lua
+  --     require('start').set_background_ascii(require('start').default_ascii_1)
+  --   end,
+  -- },
   -- {
   --   'ThePrimeagen/harpoon',
   --   branch = 'harpoon2',
@@ -241,4 +241,50 @@ return {
     end,
     -- See Commands section for default commands if you want to lazy load on them
   },
+  {
+    "folke/twilight.nvim",
+    opts = {
+      dimming = {
+        alpha = 0.9, -- amount of dimming
+        -- we try to get the foreground from the highlight groups or fallback color
+        color = { "Normal", "#ffffff" },
+        term_bg = "#000000", -- if guibg=NONE, this will be used to calculate text color
+        inactive = false,    -- when true, other windows will be fully dimmed (unless they contain the same buffer)
+      },
+      context = 0,           -- amount of lines we will try to show around the current line
+      treesitter = true,     -- use treesitter when available for the filetype
+      -- treesitter is used to automatically expand the visible text,
+      -- but you can further control the types of nodes that should always be fully expanded
+      expand = { -- for treesitter, we we always try to expand to the top-most ancestor with these types
+        "function",
+        "method",
+        "table",
+        "if_statement",
+      },
+      exclude = {}, -- exclude these filetypes
+    }
+  },
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    ---@type snacks.Config
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+      bigfile = { enabled = true },
+      dashboard = { enabled = true },
+      indent = { enabled = true },
+      input = { enabled = true },
+      dim = { enabled = true },
+      terminal = { enabled = false },
+      -- picker = { enabled = true },
+      notifier = { enabled = true },
+      quickfile = { enabled = true },
+      -- scroll = { enabled = true },
+      statuscolumn = { enabled = true },
+      words = { enabled = true },
+    },
+  }
 } -- end of return
