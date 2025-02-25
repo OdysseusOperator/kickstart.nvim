@@ -242,30 +242,30 @@ return {
     -- See Commands section for default commands if you want to lazy load on them
   },
   {
-    "folke/twilight.nvim",
+    'folke/twilight.nvim',
     opts = {
       dimming = {
-        alpha = 0.9, -- amount of dimming
+        alpha = 0.7, -- amount of dimming
         -- we try to get the foreground from the highlight groups or fallback color
-        color = { "Normal", "#ffffff" },
-        term_bg = "#000000", -- if guibg=NONE, this will be used to calculate text color
-        inactive = false,    -- when true, other windows will be fully dimmed (unless they contain the same buffer)
+        color = { 'Normal', '#ffffff' },
+        term_bg = '#000000', -- if guibg=NONE, this will be used to calculate text color
+        inactive = false, -- when true, other windows will be fully dimmed (unless they contain the same buffer)
       },
-      context = 0,           -- amount of lines we will try to show around the current line
-      treesitter = true,     -- use treesitter when available for the filetype
+      context = 0, -- amount of lines we will try to show around the current line
+      treesitter = true, -- use treesitter when available for the filetype
       -- treesitter is used to automatically expand the visible text,
       -- but you can further control the types of nodes that should always be fully expanded
       expand = { -- for treesitter, we we always try to expand to the top-most ancestor with these types
-        "function",
-        "method",
-        "table",
-        "if_statement",
+        'function',
+        'method',
+        'table',
+        'if_statement',
       },
       exclude = {}, -- exclude these filetypes
-    }
+    },
   },
   {
-    "folke/snacks.nvim",
+    'folke/snacks.nvim',
     priority = 1000,
     lazy = false,
     ---@type snacks.Config
@@ -286,5 +286,16 @@ return {
       statuscolumn = { enabled = true },
       words = { enabled = true },
     },
-  }
+  },
+
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+      -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+  },
 } -- end of return
