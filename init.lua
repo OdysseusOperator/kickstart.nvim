@@ -1036,7 +1036,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
@@ -1046,7 +1046,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -1074,5 +1074,80 @@ require('lazy').setup({
   },
 })
 
+-- My own additions
+-- Manually install python-lsp-black, python-lsp-isort and pylsp-mypy into the venv created by mason
+-- /.local/share/mason/packages/python-lsp-server/venv...
+require('lspconfig').pylsp.setup {
+  settings = {
+    pylsp = {
+      plugins = {
+        black = {
+          enabled = false,
+          --  line_length = 120,
+        },
+        autopep8 = {
+          enabled = false,
+        },
+        yapf = {
+          enabled = false,
+        },
+        pycodestyle = {
+          enabled = false,
+          ignore = { 'W391' },
+          maxLineLength = 120,
+        },
+        isort = {
+          enabled = false,
+        },
+        pylint = {
+          enabled = false,
+        },
+        pyflakes = {
+          enabled = false,
+        },
+        ruff = {
+          enabled = true,
+          formatEnabled = false,
+          lineLength = 120,
+          targetVersion = 'py311',
+        },
+      },
+    },
+  },
+}
+-- require('lspconfig').ruff.setup {
+--   init_options = {
+--     settings = {
+--       -- Ruff language server settings go here
+--       lineLength = 120,
+--       showSyntaxErrors = true,
+--     },
+--   },
+-- }
+vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', {})
+vim.keymap.set('n', '<leader>xt', ':Telescope colorscheme<CR>', {})
+vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
+vim.keymap.set('n', '<leader>xs', function()
+  local current_file = vim.fn.expand '%:p'
+
+  local base = vim.fn.expand '%:r' -- gets full path without extension
+  local ext = vim.fn.expand '%:e' -- gets the file extension
+
+  local target
+  if ext == 'ts' then
+    target = base .. '.html'
+  elseif ext == 'html' then
+    target = base .. '.ts'
+  else
+    print 'Not a .ts or .html file'
+    return
+  end
+
+  if vim.fn.filereadable(target) == 1 then
+    vim.cmd('edit ' .. target)
+  else
+    print('File does not exist: ' .. target)
+  end
+end, { desc = 'Switch between .ts and .html files' })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
