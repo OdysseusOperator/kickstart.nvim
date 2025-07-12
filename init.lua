@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -122,7 +122,7 @@ end)
 vim.o.breakindent = true
 
 -- Save undo history
-vim.o.undofile = true
+vim.opt.undofile = false
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
@@ -159,7 +159,7 @@ vim.o.inccommand = 'split'
 vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 10
+vim.opt.scrolloff = 0
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -194,10 +194,10 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<Leader>wi', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<Leader>we', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<Leader>wa', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<Leader>wl', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -428,7 +428,14 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+
+      vim.keymap.set('n', '<leader>sf', function()
+        require('telescope.builtin').find_files {
+          find_command = { 'fdfind', '--type', 'f', '--follow' },
+        }
+      end, { desc = '[S]earch [F]iles' })
+
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -570,7 +577,45 @@ require('lazy').setup({
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
+
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+
+          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+
+          -- Fuzzy find all the symbols in your current document.
+          --  Symbols are things like variables, functions, types, etc.
+          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+
+          map('<leader>dm', function()
+            require('telescope.builtin').lsp_document_symbols {
+              symbols = { 'function', 'method' }, -- Sets the query to 'method'
+            }
+          end, '[D]ocument [M]ethods')
+          map('<leader>dv', function()
+            require('telescope.builtin').lsp_document_symbols {
+              symbols = 'variable', -- Sets the query to 'method'
+            }
+          end, '[D]ocument [V]ariable')
+          map('<leader>dc', function()
+            require('telescope.builtin').lsp_document_symbols {
+              symbols = 'class', -- Sets the query to 'method'
+            }
+          end, '[D]ocument [C]lass')
+          -- Fuzzy find all the symbols in your current workspace.
+          --  Similar to document symbols, except searches over your entire project.
+          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+          -- Rename the variable under your cursor.
+          --  Most Language Servers support renaming across files, etc.
+          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+
+          -- Execute a code action, usually your cursor needs to be on top of an error
+          -- or a suggestion from your LSP for this to activate.
+          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+
+          -- WARN: This is not Goto Definition, this is Goto Declaration.
+          --  For example, in C this would take you to the header.
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -765,14 +810,21 @@ require('lazy').setup({
             lsp_format = 'fallback',
           }
         end
+        return {
+          timeout_ms = 2000,
+          lsp_format = lsp_format_opt,
+        }
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
+        python = { 'ruff_format', 'ruff_organize_imports' },
+        json = { 'prettier' },
+        html = { 'prettier' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        yaml = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -852,6 +904,16 @@ require('lazy').setup({
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
+          -- Accept ([y]es) the completion.
+          --  This will auto-import if your LSP supports it.
+          --  This will expand snippets if the LSP sent a snippet.
+          -- ['<C-y>'] = cmp.mapping.confirm { select = true },
+          -- ['<F11>'] = cmp.mapping.confirm { select = true },
+          -- If you prefer more traditional completion keymaps,
+          -- you can uncomment the following lines
+          --['<CR>'] = cmp.mapping.confirm { select = true },
+          --['<Tab>'] = cmp.mapping.select_next_item(),
+          --['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
@@ -922,17 +984,17 @@ require('lazy').setup({
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
+      --local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      --statusline.setup { use_icons = vim.g.have_nerd_font }
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      --statusline.section_location = function()
+      --  return '%2l:%-2v'
+      --end
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
@@ -974,7 +1036,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
@@ -984,7 +1046,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -1012,5 +1074,80 @@ require('lazy').setup({
   },
 })
 
+-- My own additions
+-- Manually install python-lsp-black, python-lsp-isort and pylsp-mypy into the venv created by mason
+-- /.local/share/mason/packages/python-lsp-server/venv...
+require('lspconfig').pylsp.setup {
+  settings = {
+    pylsp = {
+      plugins = {
+        black = {
+          enabled = false,
+          --  line_length = 120,
+        },
+        autopep8 = {
+          enabled = false,
+        },
+        yapf = {
+          enabled = false,
+        },
+        pycodestyle = {
+          enabled = false,
+          ignore = { 'W391' },
+          maxLineLength = 120,
+        },
+        isort = {
+          enabled = false,
+        },
+        pylint = {
+          enabled = false,
+        },
+        pyflakes = {
+          enabled = false,
+        },
+        ruff = {
+          enabled = true,
+          formatEnabled = false,
+          lineLength = 120,
+          targetVersion = 'py311',
+        },
+      },
+    },
+  },
+}
+-- require('lspconfig').ruff.setup {
+--   init_options = {
+--     settings = {
+--       -- Ruff language server settings go here
+--       lineLength = 120,
+--       showSyntaxErrors = true,
+--     },
+--   },
+-- }
+vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', {})
+vim.keymap.set('n', '<leader>xt', ':Telescope colorscheme<CR>', {})
+vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
+vim.keymap.set('n', '<leader>xs', function()
+  local current_file = vim.fn.expand '%:p'
+
+  local base = vim.fn.expand '%:r' -- gets full path without extension
+  local ext = vim.fn.expand '%:e' -- gets the file extension
+
+  local target
+  if ext == 'ts' then
+    target = base .. '.html'
+  elseif ext == 'html' then
+    target = base .. '.ts'
+  else
+    print 'Not a .ts or .html file'
+    return
+  end
+
+  if vim.fn.filereadable(target) == 1 then
+    vim.cmd('edit ' .. target)
+  else
+    print('File does not exist: ' .. target)
+  end
+end, { desc = 'Switch between .ts and .html files' })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
