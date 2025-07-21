@@ -197,4 +197,11 @@ return {
       -- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
     },
   },
+  {
+    'olimorris/codecompanion.nvim',
+    dependencies = {
+      'ravitemer/mcphub.nvim',
+    },
+  },
+  { 'mfussenegger/nvim-jdtls' },
 } -- end of return
