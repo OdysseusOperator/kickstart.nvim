@@ -413,6 +413,7 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        --
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -433,6 +434,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', function()
         require('telescope.builtin').find_files {
           find_command = { 'fdfind', '--type', 'f', '--follow' },
+          path_display = { 'smart' },
+          previewer = false,
+          shorten_path = true,
         }
       end, { desc = '[S]earch [F]iles' })
 
