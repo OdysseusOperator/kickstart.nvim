@@ -1004,31 +1004,29 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
-  { -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
+  {
+  "nvim-treesitter/nvim-treesitter",
+  branch = "master",
+  lazy = false,              -- IMPORTANT on Nix
+  build = ":TSUpdate",
+  config = function()
+    require("nvim-treesitter.configs").setup {
+      ensure_installed = {
+        "bash", "c", "diff", "html", "lua", "luadoc",
+        "markdown", "markdown_inline", "query", "vim", "vimdoc",
+      },
       auto_install = true,
       highlight = {
         enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
+        additional_vim_regex_highlighting = { "ruby" },
       },
-      indent = { enable = true, disable = { 'ruby' } },
-    },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-  },
+      indent = {
+        enable = true,
+        disable = { "ruby" },
+      },
+    }
+  end,
+},
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1153,18 +1151,5 @@ vim.keymap.set('n', '<leader>xs', function()
     print('File does not exist: ' .. target)
   end
 end, { desc = 'Switch between .ts and .html files' })
-require('codecompanion').setup {
-  extensions = {
-    mcphub = {
-      callback = 'mcphub.extensions.codecompanion',
-
-      opts = {
-        make_vars = true,
-        make_slash_commands = true,
-        show_result_in_chat = true,
-      },
-    },
-  },
-}
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
