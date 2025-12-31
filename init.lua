@@ -433,7 +433,7 @@ require('lazy').setup({
 
       vim.keymap.set('n', '<leader>sf', function()
         require('telescope.builtin').find_files {
-          find_command = { 'fdfind', '--type', 'f', '--follow' },
+          find_command = { 'fd', '--type', 'f', '--follow' },
           path_display = { 'smart' },
           previewer = false,
           shorten_path = true,
