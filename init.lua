@@ -819,16 +819,20 @@ require('lazy').setup({
           lsp_format = lsp_format_opt,
         }
       end,
+      -- the names have to use the underscore if it is multi words, even tho the formatter command might have a -
       formatters_by_ft = {
-        lua = { 'stylua' },
+        -- lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'ruff_format', 'ruff_organize_imports' },
-        json = { 'prettier' },
-        html = { 'prettier' },
+        -- python = { 'ruff_format', 'ruff_organize_imports' },
+        -- json = { 'prettier' },
+        -- html = { 'prettier' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        yaml = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        -- javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        -- yaml = { 'prettierd', 'prettier', stop_after_first = true },
+        -- typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        nix = {
+          'nixpkgs_fmt',
+        },
       },
     },
   },
@@ -1005,28 +1009,37 @@ require('lazy').setup({
     end,
   },
   {
-  "nvim-treesitter/nvim-treesitter",
-  branch = "master",
-  lazy = false,              -- IMPORTANT on Nix
-  build = ":TSUpdate",
-  config = function()
-    require("nvim-treesitter.configs").setup {
-      ensure_installed = {
-        "bash", "c", "diff", "html", "lua", "luadoc",
-        "markdown", "markdown_inline", "query", "vim", "vimdoc",
-      },
-      auto_install = true,
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = { "ruby" },
-      },
-      indent = {
-        enable = true,
-        disable = { "ruby" },
-      },
-    }
-  end,
-},
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'master',
+    lazy = false, -- IMPORTANT on Nix
+    build = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter.configs').setup {
+        ensure_installed = {
+          'bash',
+          'c',
+          'diff',
+          'html',
+          'lua',
+          'luadoc',
+          'markdown',
+          'markdown_inline',
+          'query',
+          'vim',
+          'vimdoc',
+        },
+        auto_install = true,
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = { 'ruby' },
+        },
+        indent = {
+          enable = true,
+          disable = { 'ruby' },
+        },
+      }
+    end,
+  },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
