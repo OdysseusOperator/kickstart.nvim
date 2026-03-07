@@ -203,5 +203,100 @@ return {
   --     'ravitemer/mcphub.nvim',
   --   },
   -- },
-  -- { 'mfussenegger/nvim-jdtls' },
+  {
+    'mfussenegger/nvim-jdtls',
+    ft = { 'java' },
+    config = function()
+      local jdtls_bin = vim.fn.exepath 'jdtls'
+      if jdtls_bin == '' then
+        vim.notify('jdtls binary not found in PATH. Is jdt-language-server installed via Nix?', vim.log.levels.ERROR)
+        return
+      end
+
+      -- Re-run start_or_attach for every Java buffer, not just the first one
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'java',
+        group = vim.api.nvim_create_augroup('jdtls-attach', { clear = true }),
+        callback = function()
+          local jdtls = require 'jdtls'
+
+          -- Per-project workspace (avoids config collisions between projects)
+          local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+          local workspace_dir = vim.fn.stdpath 'data' .. '/jdtls/workspaces/' .. project_name
+
+          local config = {
+            cmd = { jdtls_bin, '-data', workspace_dir },
+
+            root_dir = require('jdtls.setup').find_root {
+              '.git',
+              'mvnw',
+              'gradlew',
+              'pom.xml',
+              'build.gradle',
+              'build.gradle.kts',
+            },
+
+            settings = {
+              java = {
+                eclipse = { downloadSources = true },
+                configuration = { updateBuildConfiguration = 'interactive' },
+                maven = { downloadSources = true },
+                implementationsCodeLens = { enabled = true },
+                referencesCodeLens = { enabled = true },
+                references = { includeDecompiledSources = true },
+                format = { enabled = true },
+              },
+              signatureHelp = { enabled = true },
+              completion = {
+                favoriteStaticMembers = {
+                  'org.hamcrest.MatcherAssert.assertThat',
+                  'org.hamcrest.Matchers.*',
+                  'org.junit.Assert.*',
+                  'org.junit.Assume.*',
+                  'org.junit.jupiter.api.Assertions.*',
+                  'org.junit.jupiter.api.Assumptions.*',
+                  'org.junit.jupiter.api.DynamicContainer.*',
+                  'org.junit.jupiter.api.DynamicTest.*',
+                  'org.mockito.Mockito.*',
+                },
+              },
+              sources = {
+                organizeImports = {
+                  starThreshold = 9999,
+                  staticStarThreshold = 9999,
+                },
+              },
+            },
+
+            capabilities = (function()
+              local ok, blink = pcall(require, 'blink.cmp')
+              if ok then
+                return blink.get_lsp_capabilities()
+              end
+              return vim.lsp.protocol.make_client_capabilities()
+            end)(),
+
+            -- on_attach: jdtls-specific extras on top of the global LspAttach keymaps
+            on_attach = function(_, bufnr)
+              local map = function(keys, func, desc)
+                vim.keymap.set('n', keys, func, { buffer = bufnr, desc = 'JDTLS: ' .. desc })
+              end
+
+              map('<leader>jo', jdtls.organize_imports, '[O]rganize imports')
+              map('<leader>jv', jdtls.extract_variable, 'Extract [V]ariable')
+              map('<leader>jc', jdtls.extract_constant, 'Extract [C]onstant')
+              map('<leader>jt', jdtls.test_nearest_method, '[T]est nearest method')
+              map('<leader>jT', jdtls.test_class, '[T]est class')
+
+              vim.keymap.set('v', '<leader>jm', function()
+                jdtls.extract_method(true)
+              end, { buffer = bufnr, desc = 'JDTLS: Extract [M]ethod' })
+            end,
+          }
+
+          jdtls.start_or_attach(config)
+        end,
+      })
+    end,
+  },
 } -- end of return
