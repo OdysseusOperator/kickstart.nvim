@@ -1144,6 +1144,7 @@ require('lspconfig').pylsp.setup {
 --   },
 -- }
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', {})
+vim.keymap.set('i', '<Tab>', '<Tab>', { noremap = true })
 vim.keymap.set('n', '<leader>xt', ':Telescope colorscheme<CR>', {})
 vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
 vim.keymap.set('n', '<leader>xs', function()
