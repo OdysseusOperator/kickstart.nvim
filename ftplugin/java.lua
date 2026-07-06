@@ -1,0 +1,1 @@
+-- jdtls is configured via lua/custom/plugins/init.lua (nvim-jdtls plugin)
